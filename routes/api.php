@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\DataInventarisController; // Import Controller
+use App\Http\Controllers\Api\DataInventarisController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,12 +16,14 @@ use App\Http\Controllers\Api\DataInventarisController; // Import Controller
 |
 */
 
-Route::resource('inventaris', DataInventarisController::class)->only([
-    'index',
-    'store',
-    'destroy',
-    'update'
-]);
+Route::post('login', [AuthController::class, 'login']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    Route::resource('inventaris', DataInventarisController::class)->only([
+        'index',
+        'store',
+        'destroy',
+        'update'
+    ]);
     return $request->user();
 });
