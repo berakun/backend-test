@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DataInventarisController;
+use App\Http\Controllers\Api\DataAnggotaController;
 use App\Http\Controllers\Api\AuthController;
 
 /*
@@ -17,13 +18,22 @@ use App\Http\Controllers\Api\AuthController;
 */
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    Route::resource('inventaris', DataInventarisController::class)->only([
-        'index',
-        'store',
-        'destroy',
-        'update'
-    ]);
     return $request->user();
+});
+
+// Resource Data Inventaris (Endpoint: /api/inventaris)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']); 
+    
+    Route::resource('inventaris', DataInventarisController::class)->only([
+        'index', 'store', 'destroy', 'update'
+    ]);
+
+    // Resource Data Anggota (Endpoint: /api/anggota)
+    Route::resource('anggota', DataAnggotaController::class)->only([
+        'index', 'store', 'show', 'update', 'destroy'
+    ]);
 });

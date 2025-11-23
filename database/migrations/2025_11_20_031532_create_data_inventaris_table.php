@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('data_inventaris', function (Blueprint $table) {
             $table->id(); // Auto-incrementing ID
-
-            // Kolom dari gambar (disesuaikan)
             $table->string('inventaris_id')->unique();
             $table->string('barang');
             $table->string('type');
@@ -22,8 +20,11 @@ return new class extends Migration
             $table->string('spesifikasi');
             $table->enum('status', ['Baik', 'Rusak', 'Tidak Dipakai', 'Dilelang']);
 
-            // Kolom untuk menghubungkan ke tabel 'users' (Assign) dan 'departments' (jika ada)
-            $table->foreignId('user_id')->nullable()->constrained('users'); // userA, userB, dll.
+            $table->foreignId('assign')
+              ->nullable()
+              ->constrained('data_anggota') // Merujuk ke tabel data_anggota
+              ->onDelete('set null');
+
             $table->string('department');
 
             $table->timestamps(); // created_at dan updated_at

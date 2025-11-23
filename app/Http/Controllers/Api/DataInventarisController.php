@@ -16,12 +16,17 @@ class DataInventarisController extends Controller
     {
         $inventories = DataInventaris::all();
 
-        // 2. Kembalikan data dalam format JSON
-        // Kode status HTTP 200 (OK) akan otomatis diberikan
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'Daftar data inventaris berhasil diambil',
+        //     'data' => $inventories
+        // ], 200);
+        $inventories = DataInventaris::with('anggota')->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Daftar data inventaris berhasil diambil',
-            'data' => $inventories
+            'data' => $inventories // Data ini sekarang menyertakan objek 'anggota'
         ], 200);
     }
 
@@ -38,7 +43,7 @@ class DataInventarisController extends Controller
             'status' => 'required|in:Baik,Rusak,Tidak Dipakai,Dilelang',
             'department' => 'required|string|max:100',
             'serial_number' => 'nullable|string|max:255',
-            'user_id' => 'nullable|exists:users,id', // Pastikan user_id ada di tabel users
+            'assign' => 'nullable|exists:data_anggota,id', // Pastikan user_id ada di tabel users
         ]);
 
         // Jika Validasi Gagal
@@ -85,13 +90,14 @@ class DataInventarisController extends Controller
 
         // 2. Validasi Data Masukan
         $validator = Validator::make($request->all(), [
-            'inventaris_id' => 'required|string|unique:data_inventaris,inventaris_id,' . $id,
+            'inventaris_id' => 'required|unique:data_inventaris,inventaris_id,' . $id . ',id',
             'barang' => 'sometimes|required|string|max:255',
             'type' => 'sometimes|required|string|max:100',
             'spesifikasi' => 'sometimes|required|string|max:255',
             'status' => 'sometimes|required|in:Baik,Rusak,Tidak Dipakai,Dilelang',
             'department' => 'sometimes|required|string|max:100',
             'serial_number' => 'nullable|string|max:255',
+            'assign' => 'nullable|exists:data_anggota,id',
         ]);
 
         // Jika Validasi Gagal
